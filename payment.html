@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payment | Campus Snack Bar POS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1c2033;--muted:#6b7089;--bg:#f3f4f9;--card:#fff;--line:#e4e6f0;--red:#d9372b;--red-d:#b92a20;--mustard:#f6b91e;--green:#2f8a52;--green-d:#246f41;--green-bg:#e6f5ec;--err:#c62828;--err-bg:#fdeaea;--r:18px;--sh:0 10px 30px -12px rgba(28,32,51,.28);--font:'Outfit','Segoe UI',system-ui,Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.4}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
+:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+header{background:var(--ink);color:#fff;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:46px;height:46px;border-radius:14px;transition:transform .3s}
+.brand:hover img{transform:rotate(-8deg) scale(1.08)}
+.brand h1{font-size:1.3rem;font-weight:800}
+.brand p{font-size:.8rem;color:#aab0cc}
+nav.top{display:flex;gap:6px}
+nav.top a{padding:9px 16px;border-radius:999px;font-weight:600;color:#cfd3ea;transition:background .2s,color .2s;display:flex;align-items:center;gap:8px}
+nav.top a:hover,nav.top a.on{background:#fff;color:var(--ink)}
+.pill{background:var(--red);color:#fff;border-radius:999px;min-width:22px;height:22px;padding:0 6px;font-size:.78rem;display:none;place-items:center}
+.pill.show{display:grid}
+.steps{display:flex;gap:8px;padding:16px 28px 0;max-width:1200px;margin:0 auto;overflow-x:auto}
+.step{flex:1;min-width:130px;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:var(--card);border:2px solid transparent;color:var(--muted);font-weight:500;font-size:.92rem;transition:all .35s}
+.step i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--line);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+.step.done{color:var(--green)}.step.done i{background:var(--green);color:#fff}
+.step.on{color:var(--ink);border-color:var(--red);box-shadow:var(--sh)}.step.on i{background:var(--red);color:#fff}
+main{max-width:1200px;margin:0 auto;padding:18px 28px 90px;animation:in .5s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h2{font-size:1.6rem;font-weight:800;margin-bottom:4px}
+.lead{color:var(--muted);margin-bottom:18px}
+.panel{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:14px;font-weight:700;font-size:1rem;transition:background .2s,transform .15s,color .2s;border:2px solid transparent}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.97)}
+.btn.red{background:var(--red);color:#fff}.btn.red:hover{background:var(--red-d)}
+.btn.green{background:var(--green);color:#fff}.btn.green:hover{background:var(--green-d)}
+.btn.ghost{border-color:var(--ink)}.btn.ghost:hover{background:var(--ink);color:#fff}
+.btn:disabled,.btn.off{background:var(--line);color:var(--muted);border-color:transparent;cursor:not-allowed;transform:none;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,160px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:999px;font-weight:500;box-shadow:var(--sh);transition:transform .35s cubic-bezier(.3,1.5,.5,1);z-index:80;pointer-events:none}
+.toast.show{transform:translate(-50%,0)}
+@media(max-width:700px){header,.steps{padding-inline:14px}main{padding:16px 14px 90px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+
+.wrap{display:grid;grid-template-columns:1fr 430px;gap:24px;align-items:start}
+.mini{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;margin:10px 0 16px}
+.mini li{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center}
+.mini img{width:56px;height:46px;object-fit:cover;border-radius:10px}
+.mini small{color:var(--muted);display:block}
+.tot{display:flex;justify-content:space-between;align-items:baseline;border-top:2px dashed var(--line);padding-top:14px}
+.tot strong{font-size:2rem}
+label{font-weight:600;display:block;margin-bottom:8px}
+.money{position:relative}
+.money b{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1.4rem;color:var(--muted)}
+.money input{width:100%;padding:16px 16px 16px 42px;font:inherit;font-size:1.6rem;font-weight:700;border:2px solid var(--line);border-radius:14px;transition:border-color .2s,background .2s}
+.money input:focus{outline:none;border-color:var(--ink)}
+.money input.bad{border-color:var(--err);background:var(--err-bg);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.quick{display:flex;gap:8px;margin:12px 0;flex-wrap:wrap}
+.quick button{padding:8px 15px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-weight:600;transition:all .15s}
+.quick button:hover{background:var(--mustard);border-color:var(--mustard)}
+.msg{max-height:0;overflow:hidden;border-radius:12px;font-weight:500;padding:0 14px;transition:all .3s;background:var(--err-bg);color:var(--err)}
+.msg.show{max-height:100px;padding:11px 14px;margin-bottom:12px}
+.prev{display:flex;justify-content:space-between;color:var(--muted);margin-bottom:14px}.prev b{color:var(--ink);font-size:1.1rem}
+.panel .btn{width:100%}.panel .btn+.btn{margin-top:10px}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html"><img src="images/logo.svg" alt="Campus Snack Bar logo"><div><h1>Campus Snack Bar</h1><p>Point of Sale · Cashier Counter</p></div></a><nav class="top"><a href="index.html">Menu</a><a href="cart.html" class="on">Cart <span class="pill" id="navCount">0</span></a></nav></header>
+<div class="steps" aria-label="Transaction progress"><div class="step done"><i>1</i>Browse</div><div class="step done"><i>2</i>Review order</div><div class="step on"><i>3</i>Payment</div><div class="step "><i>4</i>Confirmation</div><div class="step "><i>5</i>Receipt</div></div>
+<main>
+
+<h2>Payment</h2>
+<p class="lead">Type the cash amount received from the customer.</p>
+<div class="wrap">
+  <section class="panel"><h3>Order</h3><ul class="mini" id="mini"></ul>
+    <div class="tot"><span>Total amount due</span><strong id="total">₱0.00</strong></div></section>
+  <section class="panel">
+    <label for="cash">Cash received</label>
+    <div class="money"><b>₱</b><input id="cash" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" autofocus></div>
+    <div class="quick" id="quick"></div>
+    <div class="msg" id="msg" role="alert"></div>
+    <div class="prev"><span>Change</span><b id="chg">₱0.00</b></div>
+    <button class="btn green" id="pay">Confirm payment</button>
+    <a class="btn ghost" href="cart.html">Back to order</a>
+  </section>
+</div>
+
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script src="js/store.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+
+Store.guard('shop');
+if(!Store.cart().length) location.replace('cart.html');
+const T=Store.total();
+$('total').textContent=peso(T);
+$('mini').innerHTML=Store.cart().map(i=>{const p=find(i.id);return `<li><img src="${p.img}" alt="${p.name}"><div>${p.name}<small>${i.qty} × ${peso(p.price)}</small></div><b>${peso(p.price*i.qty)}</b></li>`}).join('');
+$('quick').innerHTML=[['Exact',T],['₱50',50],['₱100',100],['₱200',200],['₱500',500],['₱1000',1000]].map(([l,v])=>`<button data-v="${v}">${l}</button>`).join('');
+function parse(raw){
+  const s=raw.replace(/[₱,\s]/g,'');
+  if(s===''||!/^-?\d*\.?\d+$|^-?\d+\.$/.test(s)) return {err:'Please enter a valid payment amount.'};
+  const v=parseFloat(s);
+  if(isNaN(v)||v<0) return {err:'Please enter a valid payment amount.'};
+  return {value:Math.round(v*100)/100};
+}
+function msg(t){const m=$('msg');m.textContent=t||'';m.classList.toggle('show',!!t);$('cash').classList.toggle('bad',!!t);}
+function preview(){const r=parse($('cash').value);$('chg').textContent=(!r.err&&r.value>=T)?peso(r.value-T):'₱0.00';}
+function pay(){
+  const r=parse($('cash').value);
+  if(r.err){msg(r.err);$('cash').focus();return;}
+  if(r.value<T){msg('Insufficient payment. Please enter at least '+peso(T)+'.');$('cash').focus();return;}
+  const lines=Store.cart().map(i=>{const p=find(i.id);return {name:p.name,img:p.img,qty:i.qty,unit:p.price,sub:p.price*i.qty}});
+  Store.saveTx({ref:Store.nextRef(),date:new Date().toISOString(),lines,total:T,cash:r.value,change:Math.round((r.value-T)*100)/100});
+  Store.clear();
+  location.href='confirmation.html';
+}
+$('quick').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('cash').value=(+b.dataset.v).toFixed(2);msg('');preview();$('cash').focus();});
+$('cash').addEventListener('input',()=>{msg('');preview();});
+$('cash').addEventListener('keydown',e=>{if(e.key==='Enter')pay();});
+$('pay').addEventListener('click',pay);
+refreshNav();
+
+</script>
+</body>
+</html>
