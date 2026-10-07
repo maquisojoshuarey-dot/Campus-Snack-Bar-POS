@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu | Campus Snack Bar POS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1c2033;--muted:#6b7089;--bg:#f3f4f9;--card:#fff;--line:#e4e6f0;--red:#d9372b;--red-d:#b92a20;--mustard:#f6b91e;--green:#2f8a52;--green-d:#246f41;--green-bg:#e6f5ec;--err:#c62828;--err-bg:#fdeaea;--r:18px;--sh:0 10px 30px -12px rgba(28,32,51,.28);--font:'Outfit','Segoe UI',system-ui,Arial,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.4}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
+:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+header{background:var(--ink);color:#fff;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:46px;height:46px;border-radius:14px;transition:transform .3s}
+.brand:hover img{transform:rotate(-8deg) scale(1.08)}
+.brand h1{font-size:1.3rem;font-weight:800}
+.brand p{font-size:.8rem;color:#aab0cc}
+nav.top{display:flex;gap:6px}
+nav.top a{padding:9px 16px;border-radius:999px;font-weight:600;color:#cfd3ea;transition:background .2s,color .2s;display:flex;align-items:center;gap:8px}
+nav.top a:hover,nav.top a.on{background:#fff;color:var(--ink)}
+.pill{background:var(--red);color:#fff;border-radius:999px;min-width:22px;height:22px;padding:0 6px;font-size:.78rem;display:none;place-items:center}
+.pill.show{display:grid}
+.steps{display:flex;gap:8px;padding:16px 28px 0;max-width:1200px;margin:0 auto;overflow-x:auto}
+.step{flex:1;min-width:130px;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:var(--card);border:2px solid transparent;color:var(--muted);font-weight:500;font-size:.92rem;transition:all .35s}
+.step i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--line);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+.step.done{color:var(--green)}.step.done i{background:var(--green);color:#fff}
+.step.on{color:var(--ink);border-color:var(--red);box-shadow:var(--sh)}.step.on i{background:var(--red);color:#fff}
+main{max-width:1200px;margin:0 auto;padding:18px 28px 90px;animation:in .5s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h2{font-size:1.6rem;font-weight:800;margin-bottom:4px}
+.lead{color:var(--muted);margin-bottom:18px}
+.panel{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:14px;font-weight:700;font-size:1rem;transition:background .2s,transform .15s,color .2s;border:2px solid transparent}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.97)}
+.btn.red{background:var(--red);color:#fff}.btn.red:hover{background:var(--red-d)}
+.btn.green{background:var(--green);color:#fff}.btn.green:hover{background:var(--green-d)}
+.btn.ghost{border-color:var(--ink)}.btn.ghost:hover{background:var(--ink);color:#fff}
+.btn:disabled,.btn.off{background:var(--line);color:var(--muted);border-color:transparent;cursor:not-allowed;transform:none;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,160px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:999px;font-weight:500;box-shadow:var(--sh);transition:transform .35s cubic-bezier(.3,1.5,.5,1);z-index:80;pointer-events:none}
+.toast.show{transform:translate(-50%,0)}
+@media(max-width:700px){header,.steps{padding-inline:14px}main{padding:16px 14px 90px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;transition:transform .25s}
+.card:hover{transform:translateY(-6px)}
+.ph{position:relative;height:180px;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.card:hover .ph img{transform:scale(1.08)}
+.inc{position:absolute;top:12px;right:12px;background:var(--ink);color:#fff;border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:700;transform:scale(0);transition:transform .3s cubic-bezier(.3,1.8,.5,1)}
+.inc.show{transform:scale(1)}
+.cb{padding:16px;display:flex;flex-direction:column;gap:4px;flex:1}
+.cb h3{font-size:1.1rem}.cb p{color:var(--muted);font-size:.88rem;flex:1}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.price{font-size:1.35rem;font-weight:800}
+.bar{position:fixed;left:50%;bottom:20px;transform:translate(-50%,140px);background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 24px;display:flex;align-items:center;gap:22px;box-shadow:var(--sh);transition:transform .4s cubic-bezier(.3,1.4,.5,1);z-index:30;width:max-content;max-width:calc(100% - 24px)}
+.bar.show{transform:translate(-50%,0)}
+.bar span{color:#aab0cc;font-size:.9rem;display:block}.bar b{font-size:1.25rem}
+</style>
+</head>
+<body>
+<header><a class="brand" href="index.html"><img src="images/logo.svg" alt="Campus Snack Bar logo"><div><h1>Campus Snack Bar</h1><p>Point of Sale · Cashier Counter</p></div></a><nav class="top"><a href="index.html" class="on">Menu</a><a href="cart.html">Cart <span class="pill" id="navCount">0</span></a></nav></header>
+<div class="steps" aria-label="Transaction progress"><div class="step on"><i>1</i>Browse</div><div class="step "><i>2</i>Review order</div><div class="step "><i>3</i>Payment</div><div class="step "><i>4</i>Confirmation</div><div class="step "><i>5</i>Receipt</div></div>
+<main>
+
+<h2>Menu</h2>
+<p class="lead">Choose what the customer wants. Prices are in Philippine pesos.</p>
+<div class="grid" id="grid"></div>
+<div class="bar" id="bar"><div><span id="barTxt">0 items</span><b id="barTot">₱0.00</b></div><a class="btn red" href="cart.html">View cart</a></div>
+
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script src="js/store.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+
+Store.guard('shop');
+$('grid').innerHTML=PRODUCTS.map(p=>`<article class="card"><div class="ph"><img src="${p.img}" alt="${p.name}"><span class="inc" id="inc${p.id}"></span></div><div class="cb"><h3>${p.name}</h3><p>${p.desc}</p><div class="row"><span class="price">${peso(p.price)}</span><button class="btn red" data-add="${p.id}" aria-label="Add ${p.name} to cart">Add to cart</button></div></div></article>`).join('');
+function sync(){
+  const cart=Store.cart();
+  PRODUCTS.forEach(p=>{const c=cart.find(i=>i.id===p.id),e=$('inc'+p.id);e.textContent=c?c.qty+' in cart':'';e.classList.toggle('show',!!c)});
+  const n=Store.count();
+  $('barTxt').textContent=n+(n===1?' item':' items');$('barTot').textContent=peso(Store.total());
+  $('bar').classList.toggle('show',n>0);refreshNav();
+}
+$('grid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-add]');if(!b)return;
+  const id=+b.dataset.add;
+  toast(Store.add(id)?find(id).name+' added to cart':'Maximum quantity reached');
+  sync();
+});
+sync();
+
+</script>
+</body>
+</html>
